@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+import os
+import glob
+import shutil
+
+DestinationFolder = r'C:\Users\Jguin\Documents\Soulseek Downloads\New_Songs'
+SoulseekFolder = r'C:\Users\Jguin\Documents\Soulseek Downloads\complete'
+DJFolder = r'C:\Users\Jguin\Documents\Serato_Music\Soulseek'
+ 
+ListofDownloadedPaths = []       
+for root, dirs, files in os.walk(SoulseekFolder):
+    for file in files:
+        if file.endswith("mp3" or "flac" or "m4a" or "wav"):
+            try:
+                 Path = (os.path.join(root, file))
+                 Name = Path.split('\\')[-1]
+                 #shutil.copyfile(Path, os.path.join(DestinationFolder,Name))
+                 ListofDownloadedPaths.append(Path)
+            except:
+                pass
+
+#####All Songs in DJ Folder
+os.chdir(DJFolder)
+ListOfDJSongs = os.listdir()
+
+#####All songs in Complete Folder
+ListofDownloadedSongs = []
+for Song in ListofDownloadedPaths:
+    SongName = Song.split("\\")[-1]
+    ListofDownloadedSongs.append(SongName)
+
+####List Comprehension to Get New songs
+
+ListOfNewSongs = [x for x in ListofDownloadedSongs if x not in ListOfDJSongs]
+
+####Get List of Indices for Paths of New Songs in Complete Folder (ListofDownloadedSongs)
+
+IndicesOfNewSongs = []
+for Song in ListOfNewSongs:
+    indice = [i for i, s in enumerate(ListofDownloadedPaths) if Song in s]
+    IndicesOfNewSongs.append(indice)
+
+
+#####Moving From Starting Path to End Path
+PathsofNewSongsInDownloadFolder = []
+for Indice in IndicesOfNewSongs:
+    Path = ListofDownloadedPaths[Indice[0]]
+    PathsofNewSongsInDownloadFolder.append(Path)
+    
+#####Creating Destination Paths
+DestinationPaths = []
+for Path in PathsofNewSongsInDownloadFolder:
+    Song = Path.split("\\")[-1]
+    DestinationPath = os.path.join(DestinationFolder, Song)
+    DestinationPaths.append(DestinationPath)
+    
+####Copying Songs from Complete Folder to New Music Folder
+x = 0
+for Song in PathsofNewSongsInDownloadFolder:
+    shutil.copyfile(PathsofNewSongsInDownloadFolder[x],DestinationPaths[x])
+    x = x+1
+    
+
+
+
+
+
+
+
+
+
